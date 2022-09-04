@@ -1,25 +1,23 @@
-import { FilteredWeather, LocalizedWeather, WeatherDataMode } from "../types/types";
+import { FilteredWeather, Weather, WeatherDataMode } from "../types/types";
 
-export function FilterWeather(data: LocalizedWeather[], mode: WeatherDataMode): FilteredWeather[] | null {
-  const newFilteredWeather: FilteredWeather[] = data.map((city) => {
-    const exclusions: string[] = [];
+export function FilterWeather(data: Weather, mode: WeatherDataMode): FilteredWeather {
+  const exclusions: string[] = [];
 
-    if (mode === WeatherDataMode.BEACH) {
-      if (city.temperature < 70) exclusions.push("Too Cold");
+  if (mode === WeatherDataMode.BEACH) {
+    if (data.temperature < 70) exclusions.push("Too Cold");
 
-      if (city.windSpeed > 20) exclusions.push("Too Windy");
+    if (data.windSpeed > 20) exclusions.push("Too Windy");
 
-      if (city.clouds > 15) exclusions.push("Too Cloudy");
+    if (data.clouds > 15) exclusions.push("Too Cloudy");
 
-      if (city.alert) exclusions.push("A weather alert for the area is in effect");
-    } else {
-      if (city.temperature > 50) exclusions.push("Too Warm");
+    if (data.alert) exclusions.push("A weather alert for the area is in effect");
+  } else {
+    if (data.temperature > 50) exclusions.push("Too Warm");
 
-      if (city.alert) exclusions.push("A weather alert for the area is in effect");
-    }
+    if (data.alert) exclusions.push("A weather alert for the area is in effect");
+  }
 
-    return { ...city, exclusions: exclusions };
-  });
+  const newFilteredWeather: FilteredWeather = { ...data, exclusions: exclusions };
 
   return newFilteredWeather;
 }

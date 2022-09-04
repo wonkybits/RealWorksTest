@@ -6,7 +6,7 @@ import { BeachCities } from "../data/beach_cities";
 import { SkiCities } from "../data/ski_cities";
 import { GetWeather } from "../lib/GetWeather";
 import styles from "../styles/Home.module.css";
-import { HomeWeather, FilteredWeather, WeatherDataMode } from "../types/types";
+import { Weather, FilteredWeather, WeatherDataMode } from "../types/types";
 
 interface HomeProps {
   beachCities: FilteredWeather[];
@@ -14,20 +14,23 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = (props) => {
-  const [currLoc, setCurrLoc] = useState<HomeWeather>({ name: "loading", lat: 0, lng: 0, temperature: 0 });
+  const [currLoc, setCurrLoc] = useState<Weather>({
+    name: "loading",
+    lat: 0,
+    lng: 0,
+    temperature: 0,
+    clouds: 0,
+    windSpeed: 0,
+    alert: "",
+  });
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
-      const localWeather = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&exclude=minutely,hourly,daily,alerts&appid=f5b267cb21f0a116919db453b2b22f63&units=imperial`
+      const localWeather = await GetWeather(
+        { name: "local", lat: position.coords.latitude, lng: position.coords.longitude },
+        WeatherDataMode.NEITHER
       );
-      const jsonLocalWeather = await localWeather.json();
-      setCurrLoc({
-        name: "test",
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-        temperature: jsonLocalWeather.current.temp,
-      });
+      setCurrLoc({ ...localWeather });
     });
   }, []);
 
@@ -82,13 +85,17 @@ const Home: NextPage<HomeProps> = (props) => {
 };
 
 export async function getServerSideProps() {
-  const beachCityWeather = await GetWeather(BeachCities, WeatherDataMode.BEACH);
-  const skiCityWeather = await GetWeather(SkiCities, WeatherDataMode.SKI);
+  const beachCityWeather: Promise<FilteredWeather>[] = BeachCities.map(async (city) => {
+    return await GetWeather(city, WeatherDataMode.BEACH);
+  });
+  const skiCityWeather: Promise<FilteredWeather>[] = SkiCities.map(async (city) => {
+    return await GetWeather(city, WeatherDataMode.SKI);
+  });
 
   return {
     props: {
-      beachCities: beachCityWeather,
-      skiCities: skiCityWeather,
+      beachCities: await Promise.all(beachCityWeather),
+      skiCities: await Promise.all(skiCityWeather),
     },
   };
 
