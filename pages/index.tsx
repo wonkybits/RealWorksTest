@@ -1,8 +1,36 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useEffect, useState } from "react";
+import Card from "../components/Card";
+import { BeachCities } from "../data/beach_cities";
+import { SkiCities } from "../data/ski_cities";
+import { GetWeather } from "../lib/GetWeather";
 import styles from "../styles/Home.module.css";
+import { HomeWeather, FilteredWeather, WeatherDataMode } from "../types/types";
 
-const Home: NextPage = () => {
+interface HomeProps {
+  beachCities: FilteredWeather[];
+  skiCities: FilteredWeather[];
+}
+
+const Home: NextPage<HomeProps> = (props) => {
+  const [currLoc, setCurrLoc] = useState<HomeWeather>({ name: "loading", lat: 0, lng: 0, temperature: 0 });
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const localWeather = await fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&exclude=minutely,hourly,daily,alerts&appid=f5b267cb21f0a116919db453b2b22f63&units=imperial`
+      );
+      const jsonLocalWeather = await localWeather.json();
+      setCurrLoc({
+        name: "test",
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        temperature: jsonLocalWeather.current.temp,
+      });
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,7 +39,40 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}></main>
+      <main className={styles.main}>
+        <section className={styles.local_weather_container}>
+          <span className={styles.title}>Local Weather</span>
+          {/* <span className={styles.city}><span className={styles.label}>City:</span>{currLoc.name}</span> */}
+          <span className={styles.lat}>
+            <span className={styles.label}>Latitude:</span>
+            {currLoc.lat}
+          </span>
+          <span className={styles.lng}>
+            <span className={styles.label}>Longtitude:</span>
+            {currLoc.lng}
+          </span>
+          <span className={styles.temp}>
+            <span className={styles.label}>Temperature:</span>
+            {currLoc.temperature}
+          </span>
+        </section>
+        <section className={styles.weather_section}>
+          <div className={styles.weather_container}>
+            <span className={styles.title}>Beach Cities Weather</span>
+            {props.beachCities.map((city) => {
+              return <Card data={city} key={`${city.name}`} />;
+            })}
+            {/* <Card data={{name: "test", lat: 123.4567, lng: 123.4567, temperature: 888, windSpeed: 888, alert: "Freezing rain possible", clouds: 0, exclusions: ["Too Cold","Too Cloudy"]}} /> */}
+          </div>
+          <div className={styles.weather_container}>
+            <span className={styles.title}>Ski Cities Weather</span>
+            {props.skiCities.map((city) => {
+              return <Card data={city} key={`${city.name}`} />;
+            })}
+            {/* <Card data={{name: "test", lat: 123.4567, lng: 123.4567, temperature: 888, windSpeed: 888, alert: null, clouds: 0, exclusions: null}} /> */}
+          </div>
+        </section>
+      </main>
 
       <footer className={styles.footer}>
         <p>Phil Stene</p>
@@ -21,9 +82,22 @@ const Home: NextPage = () => {
 };
 
 export async function getServerSideProps() {
+  const beachCityWeather = await GetWeather(BeachCities, WeatherDataMode.BEACH);
+  const skiCityWeather = await GetWeather(SkiCities, WeatherDataMode.SKI);
+
   return {
-    props: {},
+    props: {
+      beachCities: beachCityWeather,
+      skiCities: skiCityWeather,
+    },
   };
+
+  // return {
+  //   props: {
+  //     beachCities: {},
+  //     skiCities: {}
+  //   },
+  // };
 }
 
 export default Home;

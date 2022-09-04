@@ -1,0 +1,103 @@
+.card {
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #eaeaea;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.card.nogo { 
+    border-color: rgba(255,0,0,0.3);
+}
+
+.title {
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid black;
+    margin-bottom: 5px;
+}
+
+.small_title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.label {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.city {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.coord_container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.coord {
+    display: flex;
+}
+
+.coord:first-child {
+    margin-right: 15px;
+}
+
+.weather_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.weather_container .title {
+    flex-basis: 100%;
+}
+
+.weather_data_container {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 60%;
+}
+
+.weather_data {
+    display: flex;
+}
+
+.weather_data:first-child {
+    margin-right: 15px;
+}
+
+.alert {
+    color: red;
+    display: flex;
+    flex-basis: 40%;
+    flex-wrap: wrap;
+}
+
+.alert .small_title {
+    flex-basis: 100%;
+}
+
+.alert .body {
+    flex-basis: 100%;
+}
+
+.exclusion_container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    flex-basis: 100%;
+}
+
+.exclusion_container .title {
+    flex-basis: 100%;
+}
+
+.exclusion_container .body {
+    flex-basis: 100%;
+}
