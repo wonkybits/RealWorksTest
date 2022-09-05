@@ -27,7 +27,11 @@ const Home: NextPage<HomeProps> = (props) => {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const localWeather = await GetWeather(
-        { name: "local", lat: position.coords.latitude, lng: position.coords.longitude },
+        {
+          name: "local",
+          lat: Math.round(position.coords.latitude * 10000) / 10000,
+          lng: Math.round(position.coords.longitude * 10000) / 10000,
+        },
         WeatherDataMode.NEITHER
       );
       setCurrLoc({ ...localWeather });
