@@ -3,7 +3,7 @@ import { FilterWeather } from "./FilterWeather";
 
 export async function GetWeather(data: City, mode: WeatherDataMode): Promise<FilteredWeather> {
   let filteredWeather: FilteredWeather = {
-    name: "",
+    name: data.name,
     lat: 0,
     lng: 0,
     temperature: 0,
