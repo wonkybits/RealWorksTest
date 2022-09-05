@@ -15,7 +15,7 @@ export async function GetWeather(data: City, mode: WeatherDataMode): Promise<Fil
 
   try {
     const localizedWeather = await fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lng}&exclude=minutely,hourly,daily,alerts&appid=${process.env.OPENWEATHERKEY}&units=imperial`
+      `https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lng}&exclude=minutely,hourly,daily&appid=${process.env.OPENWEATHERKEY}&units=imperial`
     );
     const jsonWeather = await localizedWeather.json();
     const cityWeather: Weather = {

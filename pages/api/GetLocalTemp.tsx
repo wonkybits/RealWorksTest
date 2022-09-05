@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       `https://api.openweathermap.org/data/2.5/onecall?lat=${req.body.lat}&lon=${req.body.lng}&exclude=minutely,hourly,daily,alerts&appid=${process.env.OPENWEATHERKEY}&units=imperial`
     );
     const weatherJSON = await weatherPromise.json();
+    console.log(`GetLocalTemp.handler, weather -> ${JSON.stringify(weatherJSON)}`);
     res.status(200).send({ temperature: weatherJSON.current.temp } as LocalizedTemperature);
   } else {
     res.status(400).send({ message: "Must include lat & lng data" });

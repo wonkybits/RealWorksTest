@@ -30,7 +30,11 @@ const Home: NextPage<HomeProps> = (props) => {
         body: JSON.stringify({ lat: position.coords.latitude, lng: position.coords.longitude }),
       });
       const tempJSON = await tempPromise.json();
-      setCurrLoc({ lat: position.coords.latitude, lng: position.coords.longitude, temperature: tempJSON.temperature });
+      setCurrLoc({
+        lat: Math.round(position.coords.latitude * 10000) / 10000,
+        lng: Math.round(position.coords.longitude * 10000) / 10000,
+        temperature: tempJSON.temperature,
+      });
     });
   }, []);
 
