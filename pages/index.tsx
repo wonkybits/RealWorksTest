@@ -106,10 +106,10 @@ const Home: NextPage<HomeProps> = (props) => {
 };
 
 export async function getServerSideProps() {
-  const beachCityWeather: Promise<FilteredWeather | null>[] = BeachCities.map(async (city) => {
+  const beachCityWeather: Promise<FilteredWeather>[] = BeachCities.map(async (city) => {
     return await GetWeather(city, WeatherDataMode.BEACH);
   });
-  const skiCityWeather: Promise<FilteredWeather | null>[] = SkiCities.map(async (city) => {
+  const skiCityWeather: Promise<FilteredWeather>[] = SkiCities.map(async (city) => {
     return await GetWeather(city, WeatherDataMode.SKI);
   });
 
