@@ -43,8 +43,7 @@ export default function Card(props: CardProps) {
         {props.data.exclusions.length > 0 && (
           <div className={styles.exclusion_container}>
             <span className={styles.title}>Reasons not to go:</span>
-            {/* <span className={styles.body}>{props.data.exclusions}</span> */}
-            <ul>
+            <ul className={styles.body}>
               {props.data.exclusions.map((item, index) => {
                 return <li key={`exclusion-${index}`}>{item}</li>;
               })}

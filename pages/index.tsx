@@ -45,7 +45,6 @@ const Home: NextPage<HomeProps> = (props) => {
       <main className={styles.main}>
         <section className={styles.local_weather_container}>
           <span className={styles.title}>Local Weather</span>
-          {/* <span className={styles.city}><span className={styles.label}>City:</span>{currLoc.name}</span> */}
           <span className={styles.lat}>
             <span className={styles.label}>Latitude:</span>
             {currLoc.lat}
@@ -65,14 +64,36 @@ const Home: NextPage<HomeProps> = (props) => {
             {props.beachCities.map((city) => {
               return <Card data={city} key={`${city.name}`} />;
             })}
-            {/* <Card data={{name: "test", lat: 123.4567, lng: 123.4567, temperature: 888, windSpeed: 888, alert: "Freezing rain possible", clouds: 0, exclusions: ["Too Cold","Too Cloudy"]}} /> */}
+            {/* <Card
+              data={{
+                name: "test",
+                lat: 123.4567,
+                lng: 123.4567,
+                temperature: 888,
+                windSpeed: 888,
+                alert: "Freezing rain possible",
+                clouds: 0,
+                exclusions: ["Too Cold", "Too Cloudy"],
+              }}
+            /> */}
           </div>
           <div className={styles.weather_container}>
             <span className={styles.title}>Ski Cities Weather</span>
             {props.skiCities.map((city) => {
               return <Card data={city} key={`${city.name}`} />;
             })}
-            {/* <Card data={{name: "test", lat: 123.4567, lng: 123.4567, temperature: 888, windSpeed: 888, alert: null, clouds: 0, exclusions: null}} /> */}
+            {/* <Card
+              data={{
+                name: "test",
+                lat: 123.4567,
+                lng: 123.4567,
+                temperature: 888,
+                windSpeed: 888,
+                alert: null,
+                clouds: 0,
+                exclusions: [],
+              }}
+            /> */}
           </div>
         </section>
       </main>
@@ -102,7 +123,7 @@ export async function getServerSideProps() {
   // return {
   //   props: {
   //     beachCities: {},
-  //     skiCities: {}
+  //     skiCities: {},
   //   },
   // };
 }
