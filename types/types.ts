@@ -15,6 +15,15 @@ export interface FilteredWeather extends Weather {
   exclusions: string[];
 }
 
+export interface LocalizedTemperature {
+  temperature: number;
+}
+
+export interface LocalWeather extends LocalizedTemperature {
+  lat: number;
+  lng: number;
+}
+
 export enum WeatherDataMode {
   BEACH,
   SKI,

@@ -6,7 +6,7 @@ import { BeachCities } from "../data/beach_cities";
 import { SkiCities } from "../data/ski_cities";
 import { GetWeather } from "../lib/GetWeather";
 import styles from "../styles/Home.module.css";
-import { Weather, FilteredWeather, WeatherDataMode } from "../types/types";
+import { FilteredWeather, WeatherDataMode, LocalWeather } from "../types/types";
 
 interface HomeProps {
   beachCities: FilteredWeather[];
@@ -14,27 +14,23 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = (props) => {
-  const [currLoc, setCurrLoc] = useState<Weather>({
-    name: "loading",
+  const [currLoc, setCurrLoc] = useState<LocalWeather>({
     lat: 0,
     lng: 0,
     temperature: 0,
-    clouds: 0,
-    windSpeed: 0,
-    alert: "",
   });
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
-      const localWeather = await GetWeather(
-        {
-          name: "local",
-          lat: Math.round(position.coords.latitude * 10000) / 10000,
-          lng: Math.round(position.coords.longitude * 10000) / 10000,
+      const tempPromise = await fetch("/api/GetLocalTemp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        WeatherDataMode.NEITHER
-      );
-      setCurrLoc({ ...localWeather });
+        body: JSON.stringify({ lat: position.coords.latitude, lng: position.coords.longitude }),
+      });
+      const tempJSON = await tempPromise.json();
+      setCurrLoc({ lat: position.coords.latitude, lng: position.coords.longitude, temperature: tempJSON.temperature });
     });
   }, []);
 

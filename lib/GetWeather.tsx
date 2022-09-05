@@ -3,7 +3,7 @@ import { FilterWeather } from "./FilterWeather";
 
 export async function GetWeather(data: City, mode: WeatherDataMode): Promise<FilteredWeather> {
   const localizedWeather = await fetch(
-    `https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lng}&exclude=minutely,hourly,daily,alerts&appid=${process.env.openweatherkey}&units=imperial`
+    `https://api.openweathermap.org/data/2.5/onecall?lat=${data.lat}&lon=${data.lng}&exclude=minutely,hourly,daily,alerts&appid=${process.env.OPENWEATHERKEY}&units=imperial`
   );
   const jsonWeather = await localizedWeather.json();
   const cityWeather: Weather = {
