@@ -9,8 +9,8 @@ import styles from "../styles/Home.module.css";
 import { FilteredWeather, WeatherDataMode, LocalWeather } from "../types/types";
 
 interface HomeProps {
-  beachCities: FilteredWeather[];
-  skiCities: FilteredWeather[];
+  beachCities: FilteredWeather[] | boolean[];
+  skiCities: FilteredWeather[] | boolean[];
 }
 
 const Home: NextPage<HomeProps> = (props) => {
@@ -33,7 +33,7 @@ const Home: NextPage<HomeProps> = (props) => {
       setCurrLoc({
         lat: Math.round(position.coords.latitude * 10000) / 10000,
         lng: Math.round(position.coords.longitude * 10000) / 10000,
-        temperature: tempJSON.temperature,
+        temperature: tempJSON.temperature ?? tempJSON.message,
       });
     });
   }, []);
@@ -66,38 +66,22 @@ const Home: NextPage<HomeProps> = (props) => {
           <div className={styles.weather_container}>
             <span className={styles.title}>Beach Cities Weather</span>
             {props.beachCities.map((city) => {
-              return <Card data={city} key={`${city.name}`} />;
+              if (!city) {
+                return null;
+              } else {
+                return <Card data={city} key={`${city.name}`} />;
+              }
             })}
-            {/* <Card
-              data={{
-                name: "test",
-                lat: 123.4567,
-                lng: 123.4567,
-                temperature: 888,
-                windSpeed: 888,
-                alert: "Freezing rain possible",
-                clouds: 0,
-                exclusions: ["Too Cold", "Too Cloudy"],
-              }}
-            /> */}
           </div>
           <div className={styles.weather_container}>
             <span className={styles.title}>Ski Cities Weather</span>
             {props.skiCities.map((city) => {
-              return <Card data={city} key={`${city.name}`} />;
+              if (!city) {
+                return null;
+              } else {
+                return <Card data={city} key={`${city.name}`} />;
+              }
             })}
-            {/* <Card
-              data={{
-                name: "test",
-                lat: 123.4567,
-                lng: 123.4567,
-                temperature: 888,
-                windSpeed: 888,
-                alert: null,
-                clouds: 0,
-                exclusions: [],
-              }}
-            /> */}
           </div>
         </section>
       </main>
@@ -110,26 +94,38 @@ const Home: NextPage<HomeProps> = (props) => {
 };
 
 export async function getServerSideProps() {
-  const beachCityWeather: Promise<FilteredWeather>[] = BeachCities.map(async (city) => {
-    return await GetWeather(city, WeatherDataMode.BEACH);
-  });
-  const skiCityWeather: Promise<FilteredWeather>[] = SkiCities.map(async (city) => {
-    return await GetWeather(city, WeatherDataMode.SKI);
-  });
+  try {
+    const beachCityWeather: Promise<FilteredWeather | boolean>[] = BeachCities.map(async (city) => {
+      const weather = await GetWeather(city, WeatherDataMode.BEACH);
+      if (!weather) {
+        return Promise.resolve(weather);
+      } else {
+        return weather;
+      }
+    });
+    const skiCityWeather: Promise<FilteredWeather | boolean>[] = SkiCities.map(async (city) => {
+      const weather = GetWeather(city, WeatherDataMode.SKI);
+      if (!weather) {
+        return Promise.resolve(weather);
+      } else {
+        return weather;
+      }
+    });
 
-  return {
-    props: {
-      beachCities: await Promise.all(beachCityWeather),
-      skiCities: await Promise.all(skiCityWeather),
-    },
-  };
-
-  // return {
-  //   props: {
-  //     beachCities: {},
-  //     skiCities: {},
-  //   },
-  // };
+    return {
+      props: {
+        beachCities: await Promise.all(beachCityWeather),
+        skiCities: await Promise.all(skiCityWeather),
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        beachCities: {},
+        skiCities: {},
+      },
+    };
+  }
 }
 
 export default Home;
