@@ -34,24 +34,21 @@
   padding-right: 5px;
 }
 
-.local_weather_container .city {
-  flex-basis: 100%;
-}
-
-.local_weather_container .lat {
-  flex-basis: 50%;
-}
-
-.local_weather_container .lng {
-  flex-basis: 50%;
-}
-
-.local_weather_container .temp {
-  flex-basis: 100%;
-}
-
-.local_weather_container {
+.local_weather_container .local_weather_data {
   display: flex;
+  flex-wrap: wrap;
+}
+
+.local_weather_container .local_weather_data .lat {
+  flex-basis: 50%;
+}
+
+.local_weather_container .local_weather_data .lng {
+  flex-basis: 50%;
+}
+
+.local_weather_container .local_weather_data .temp {
+  flex-basis: 100%;
 }
 
 .weather_section {

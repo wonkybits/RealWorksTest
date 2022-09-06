@@ -9,8 +9,8 @@ import styles from "../styles/Home.module.css";
 import { FilteredWeather, WeatherDataMode, LocalWeather } from "../types/types";
 
 interface HomeProps {
-  beachCities: FilteredWeather[] | boolean[];
-  skiCities: FilteredWeather[] | boolean[];
+  beachCities: FilteredWeather[] | boolean[] | null;
+  skiCities: FilteredWeather[] | boolean[] | null;
 }
 
 const Home: NextPage<HomeProps> = (props) => {
@@ -19,6 +19,8 @@ const Home: NextPage<HomeProps> = (props) => {
     lng: 0,
     temperature: 0,
   });
+
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -29,12 +31,16 @@ const Home: NextPage<HomeProps> = (props) => {
         },
         body: JSON.stringify({ lat: position.coords.latitude, lng: position.coords.longitude }),
       });
+
       const tempJSON = await tempPromise.json();
+
       setCurrLoc({
         lat: Math.round(position.coords.latitude * 10000) / 10000,
         lng: Math.round(position.coords.longitude * 10000) / 10000,
         temperature: tempJSON.temperature ?? tempJSON.message,
       });
+
+      setLoaded(true);
     });
   }, []);
 
@@ -49,39 +55,47 @@ const Home: NextPage<HomeProps> = (props) => {
       <main className={styles.main}>
         <section className={styles.local_weather_container}>
           <span className={styles.title}>Local Weather</span>
-          <span className={styles.lat}>
-            <span className={styles.label}>Latitude:</span>
-            {currLoc.lat}
-          </span>
-          <span className={styles.lng}>
-            <span className={styles.label}>Longtitude:</span>
-            {currLoc.lng}
-          </span>
-          <span className={styles.temp}>
-            <span className={styles.label}>Temperature:</span>
-            {currLoc.temperature}
-          </span>
+          {!loaded ? (
+            <span>Loading...</span>
+          ) : (
+            <div className={styles.local_weather_data}>
+              <span className={styles.lat}>
+                <span className={styles.label}>Latitude:</span>
+                {currLoc.lat}
+              </span>
+              <span className={styles.lng}>
+                <span className={styles.label}>Longtitude:</span>
+                {currLoc.lng}
+              </span>
+              <span className={styles.temp}>
+                <span className={styles.label}>Temperature:</span>
+                {currLoc.temperature}
+              </span>
+            </div>
+          )}
         </section>
         <section className={styles.weather_section}>
           <div className={styles.weather_container}>
             <span className={styles.title}>Beach Cities Weather</span>
-            {props.beachCities.map((city) => {
-              if (!city) {
-                return null;
-              } else {
-                return <Card data={city} key={`${city.name}`} />;
-              }
-            })}
+            {props.beachCities &&
+              props.beachCities.map((city) => {
+                if (!city) {
+                  return null;
+                } else {
+                  return <Card data={city} key={`${city.name}`} />;
+                }
+              })}
           </div>
           <div className={styles.weather_container}>
             <span className={styles.title}>Ski Cities Weather</span>
-            {props.skiCities.map((city) => {
-              if (!city) {
-                return null;
-              } else {
-                return <Card data={city} key={`${city.name}`} />;
-              }
-            })}
+            {props.skiCities &&
+              props.skiCities.map((city) => {
+                if (!city) {
+                  return null;
+                } else {
+                  return <Card data={city} key={`${city.name}`} />;
+                }
+              })}
           </div>
         </section>
       </main>
@@ -121,8 +135,8 @@ export async function getServerSideProps() {
   } catch (error) {
     return {
       props: {
-        beachCities: {},
-        skiCities: {},
+        beachCities: null,
+        skiCities: null,
       },
     };
   }
